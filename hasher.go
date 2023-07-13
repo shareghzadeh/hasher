@@ -12,16 +12,27 @@ import (
 	"os"
 )
 
+const (
+	Red    = "\033[31m"
+	Green  = "\033[32m"
+	Yellow = "\033[33m"
+	Blue   = "\033[34m"
+	Purple = "\033[35m"
+	Cyan   = "\033[36m"
+	White  = "\033[37m"
+	Reset  = "\033[0m"
+)
+
 func main() {
 
 	// this if/else if will check if the passed arguments are less than 2 argument
 	// and check if the passed arguments are more that 7 or equal to it
 	if len(os.Args) <= 1 {
-		fmt.Println("USAGE:\n\tHTML:\n\t\tEscape --> ./hasher html -e \"<script>alert('Hacked')</script>\"\n\t\tUnEscape --> ./hasher html -d \"&lt;script&gt;alert('Hacked')&lt;/script&gt;\"\n\tMD5:\n\t\tHash --> ./hasher md5 -h \"Hi\"\n\t\tDeHash --> ./hasher md5 -d \"Hi\" \"c1a5298f939e87e8f962a5edfc206918\"\n\tBASE64:\n\t\tEncode --> ./hasher base64 -e \"Hi\"\n\t\tDecode --> ./hasher base64 -d \"SGk=\"\n\tBASE32:\n\t\tEncode --> ./hasher base32 -e \"Hi\"\n\t\tDecode --> ./hasher base32 -d \"JBUQ====\"\n\tURL:\n\t\tEncode --> ./hasher url -e \"Hello, World\"\n\t\tDecode --> ./hasher url -d \"Hello%2C+World\"")
-		return
+		fmt.Printf("%sUSAGE:\n\tHTML:\n\t\tEscape --> ./hasher html -e \"<script>alert('Hacked')</script>\"\n\t\tUnEscape --> ./hasher html -d \"&lt;script&gt;alert('Hacked')&lt;/script&gt;\"\n\tMD5:\n\t\tHash --> ./hasher md5 -h \"Hi\"\n\t\tDeHash --> ./hasher md5 -d \"Hi\" \"c1a5298f939e87e8f962a5edfc206918\"\n\tBASE64:\n\t\tEncode --> ./hasher base64 -e \"Hi\"\n\t\tDecode --> ./hasher base64 -d \"SGk=\"\n\tBASE32:\n\t\tEncode --> ./hasher base32 -e \"Hi\"\n\t\tDecode --> ./hasher base32 -d \"JBUQ====\"\n\tURL:\n\t\tEncode --> ./hasher url -e \"Hello, World\"\n\t\tDecode --> ./hasher url -d \"Hello%%2C+World\"\n", Green)
+		os.Exit(1)
 
 	} else if len(os.Args) >= 7 {
-		fmt.Println("To much arguments")
+		fmt.Printf("%sTo much arguments\n", Red)
 		os.Exit(1)
 	}
 
@@ -35,11 +46,11 @@ func main() {
 		switch arg2 {
 		// Encode(Escape) html special characters like: <>"'&
 		case "e", "-e", "--encode", "encode", "escape", "--escape":
-			fmt.Printf("%s\n", html.EscapeString(arg3))
+			fmt.Printf("%s%s\n", Green, html.EscapeString(arg3))
 		case "d", "-d", "--decode", "decode", "unescape", "--unescape":
 			fmt.Printf("%s\n", html.UnescapeString(arg3))
 		default:
-			fmt.Println("NOTHING")
+			fmt.Printf("%sNOTHING", Red)
 		}
 
 	} else if arg1 == "md5" {
@@ -52,12 +63,12 @@ func main() {
 			arg4 := os.Args[4]
 			// This if statement checks if passed tow md5 are the same or not(first turn the text to md5)
 			if md5ToString(arg3) == arg4 || arg3 == md5ToString(arg4) {
-				fmt.Printf("%s --> %s\n", arg3, arg4)
+				fmt.Printf("%s%s --> %s\n", Green, arg3, arg4)
 			} else {
-				fmt.Println("Hash Not Found!")
+				fmt.Printf("%sHash Not Found!\n", Red)
 			}
 		default:
-			fmt.Println("NOTHING")
+			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher md5 -e <YOUR_TEXT>\n\t\tDehash--> ./hasher md5 -d <YOUR_TEXT> <YOUR_MD5>\n", Red)
 		}
 
 	} else if arg1 == "base64" {
@@ -68,12 +79,12 @@ func main() {
 		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
 			decode, err := base64.StdEncoding.DecodeString(arg3)
 			if err != nil {
-				fmt.Println("Not a Valid base64")
-				return
+				fmt.Printf("%sNot a Valid base64", Red)
+				os.Exit(1)
 			}
 			fmt.Println(string(decode))
 		default:
-			fmt.Println("USAGE:\n\t\tEncode --> ./hasher base64 -e <YOUR_TEXT>\n\t\tDecode --> ./hasher base64 -d <YOUR_BASE64>")
+			fmt.Printf("%sUSAGE:\n\t\tEncode --> ./hasher base64 -e <YOUR_TEXT>\n\t\tDecode --> ./hasher base64 -d <YOUR_BASE64>", Green)
 		}
 
 	} else if arg1 == "base32" {
@@ -84,12 +95,12 @@ func main() {
 		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
 			decode, err := base32.StdEncoding.DecodeString(arg3)
 			if err != nil {
-				fmt.Println("Not a Valid base32")
+				fmt.Printf("%sNot a Valid base32", Red)
 				return
 			}
 			fmt.Println(string(decode))
 		default:
-			fmt.Println("USAGE:\n\t\tEncode --> ./hasher base32 -e <YOUR_TEXT>\n\t\tDecode --> ./hasher base32 -d <YOUR_BASE32>")
+			fmt.Printf("%sUSAGE:\n\t\tEncode --> ./hasher base32 -e <YOUR_TEXT>\n\t\tDecode --> ./hasher base32 -d <YOUR_BASE32>", Green)
 		}
 
 	} else if arg1 == "url" {
@@ -100,16 +111,16 @@ func main() {
 		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
 			decode, err := url.QueryUnescape(arg3)
 			if err != nil {
-				fmt.Println("Not a Valid URL Encode")
+				fmt.Printf("%sNot a Valid URL Encode", Red)
 				return
 			}
 			fmt.Println(string(decode))
 		default:
-			fmt.Println("USAGE:\n\t\tEncode --> ./hasher url -e <YOUR_TEXT>\n\t\tDecode --> ./hasher url -d <YOUR_ENCODED_TEXT>")
+			fmt.Printf("%sUSAGE:\n\t\tEncode --> ./hasher url -e <YOUR_TEXT>\n\t\tDecode --> ./hasher url -d <YOUR_ENCODED_TEXT>", Green)
 		}
 
 	} else {
-		fmt.Println("argument not satisfied")
+		fmt.Printf("%sargument not satisfied", Red)
 		os.Exit(1)
 	}
 }
