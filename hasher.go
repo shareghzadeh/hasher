@@ -2,6 +2,9 @@ package main
 
 import (
 	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base32"
 	"encoding/base64"
 	"fmt"
@@ -28,8 +31,9 @@ func main() {
 	// this if/else if will check if the passed arguments are less than 2 argument
 	// and check if the passed arguments are more that 7 or equal to it
 	if len(os.Args) <= 1 {
-		fmt.Printf("%sUSAGE:\n\tHTML:\n\t\tEscape --> ./hasher html -e \"<script>alert('Hacked')</script>\"\n\t\tUnEscape --> ./hasher html -d \"&lt;script&gt;alert('Hacked')&lt;/script&gt;\"\n\tMD5:\n\t\tHash --> ./hasher md5 -h \"Hi\"\n\t\tDeHash --> ./hasher md5 -d \"Hi\" \"c1a5298f939e87e8f962a5edfc206918\"\n\tBASE64:\n\t\tEncode --> ./hasher base64 -e \"Hi\"\n\t\tDecode --> ./hasher base64 -d \"SGk=\"\n\tBASE32:\n\t\tEncode --> ./hasher base32 -e \"Hi\"\n\t\tDecode --> ./hasher base32 -d \"JBUQ====\"\n\tURL:\n\t\tEncode --> ./hasher url -e \"Hello, World\"\n\t\tDecode --> ./hasher url -d \"Hello%%2C+World\"\n", Green)
-		os.Exit(1)
+		fmt.Printf("%sUSAGE:\n\tHTML:\n\t\tEscape --> ./hasher html -e \"<script>alert('Hacked')</script>\"\n\t\tUnEscape --> ./hasher html -d \"&lt;script&gt;alert('Hacked')&lt;/script&gt;\"\n\tMD5:\n\t\tHash --> ./hasher md5 -h \"Hi\"\n\t\tDeHash --> ./hasher md5 -d \"Hi\" \"c1a5298f939e87e8f962a5edfc206918\"\n\tBASE64:\n\t\tEncode --> ./hasher base64 -e \"Hi\"\n\t\tDecode --> ./hasher base64 -d \"SGk=\"\n\tBASE32:\n\t\tEncode --> ./hasher base32 -e \"Hi\"\n\t\tDecode --> ./hasher base32 -d \"JBUQ====\"\n\tURL:\n\t\tEncode --> ./hasher url -e \"Hello, World\"\n\t\tDecode --> ./hasher url -d \"Hello%%2C+World\"\n\tSHA1:\n\t\tHash --> ./hasher sha1 -e \"123\"\n\t\tDehash --> ./hasher sha1 -d \"123\" \"40bd001563085fc35165329ea1ff5c5ecbdbbeef\"\n\tSHA256:\n\t\tHash --> ./hasher sha256 -e \"123\"\n\t\tDehash --> ./hasher sha256 -d \"123\" \"a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3\"\n\tSHA512:\n\t\tHash --> ./hasher sha512 -e \"123\"\n\t\tDehash --> ./hasher sha512 -d \"123\" \"3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2\"\n", Green)
+		// os.Exit(1)
+		return
 
 	} else if len(os.Args) >= 7 {
 		fmt.Printf("%sTo much arguments\n", Red)
@@ -119,6 +123,54 @@ func main() {
 			fmt.Printf("%sUSAGE:\n\t\tEncode --> ./hasher url -e <YOUR_TEXT>\n\t\tDecode --> ./hasher url -d <YOUR_ENCODED_TEXT>", Green)
 		}
 
+	} else if arg1 == "sha1" {
+		switch arg2 {
+		case "e", "-e", "--encode", "encode", "--encrypt", "encrypt":
+			fmt.Println(sha1ToString(arg3))
+		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
+			arg4 := os.Args[4]
+			// This if statement checks if passed tow md5 are the same or not(first turn the text to md5)
+			if sha1ToString(arg3) == arg4 || arg3 == sha1ToString(arg4) {
+				fmt.Printf("%s%s --> %s\n", Green, arg3, arg4)
+			} else {
+				fmt.Printf("%sHash Not Found!\n", Red)
+			}
+		default:
+			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher sha1 -e <YOUR_TEXT>\n\t\tDehash --> ./hasher sha1 -d <YOUR_TEXT> <YOUR_HASHED_TEXT>", Green)
+		}
+
+	} else if arg1 == "sha256" {
+		switch arg2 {
+		case "e", "-e", "--encode", "encode", "--encrypt", "encrypt":
+			fmt.Println(sha256ToString(arg3))
+		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
+			arg4 := os.Args[4]
+			// This if statement checks if passed tow md5 are the same or not(first turn the text to md5)
+			if sha256ToString(arg3) == arg4 || arg3 == sha256ToString(arg4) {
+				fmt.Printf("%s%s --> %s\n", Green, arg3, arg4)
+			} else {
+				fmt.Printf("%sHash Not Found!\n", Red)
+			}
+		default:
+			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher sha256 -e <YOUR_TEXT>\n\t\tDehash --> ./hasher sha256 -d <YOUR_TEXT> <YOUR_HASHED_TEXT>", Green)
+		}
+
+	} else if arg1 == "sha512" {
+		switch arg2 {
+		case "e", "-e", "--encode", "encode", "--encrypt", "encrypt":
+			fmt.Println(sha512ToString(arg3))
+		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
+			arg4 := os.Args[4]
+			// This if statement checks if passed tow md5 are the same or not(first turn the text to md5)
+			if sha512ToString(arg3) == arg4 || arg3 == sha512ToString(arg4) {
+				fmt.Printf("%s%s --> %s\n", Green, arg3, arg4)
+			} else {
+				fmt.Printf("%sHash Not Found!\n", Red)
+			}
+		default:
+			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher sha512 -e <your_text>\n\t\tdehash --> ./hasher sha512 -d <your_text> <your_hashed_text>", Green)
+		}
+
 	} else {
 		fmt.Printf("%sargument not satisfied", Red)
 		os.Exit(1)
@@ -134,5 +186,29 @@ func md5ToString(a string) string {
 	// md5 byte to string
 	hashToString := fmt.Sprintf("%x", hash)
 	// return the md5 string
+	return hashToString
+}
+
+func sha1ToString(a string) string {
+	hash := sha1.New()
+	hash.Write([]byte(a))
+	hashBytes := hash.Sum(nil)
+	hashToString := fmt.Sprintf("%x", hashBytes)
+	return hashToString
+}
+
+func sha256ToString(a string) string {
+	hash := sha256.New()
+	hash.Write([]byte(a))
+	hashBytes := hash.Sum(nil)
+	hashToString := fmt.Sprintf("%x", hashBytes)
+	return hashToString
+}
+
+func sha512ToString(a string) string {
+	hash := sha512.New()
+	hash.Write([]byte(a))
+	hashBytes := hash.Sum(nil)
+	hashToString := fmt.Sprintf("%x", hashBytes)
 	return hashToString
 }

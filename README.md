@@ -9,6 +9,9 @@ An easy to use and fast tool for hashing and encoding stuff
 - BASE32
 - HTML Encode/Decode
 - URL  Encode/Decode
+- SHA1
+- SHA256
+- SHA512
 
 ## How to install it?
 ```
