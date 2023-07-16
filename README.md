@@ -20,13 +20,16 @@ If You are using `Linux` OR `Mac`:
 ```git clone https://github.com/shareghzadeh/hasher.git
    cd hasher
    chmod +x hasher
-   ./hasher```
+   ./hasher
+   ```
 
 If you are using `Windows`:
 ```git clone https://github.com/shareghzadeh/hasher.git
    cd hasher
    go build hasher.go
-   ./hasher```
+   ./hasher
+   ```
+
 ![how to use it? image](./images/pic-selected-230716-1031-27.png)
 
 **NOTE:** If you want to run the program without creating binary, use `go run hasher.go`
