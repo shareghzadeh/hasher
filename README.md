@@ -27,7 +27,7 @@ An easy to use and fast tool for hashing and encoding stuff
 **NOTE:** If you want to run the program without creating binary, use `go run hasher.go`
 
 3- After creating the binary just run it `./hasher` (it is interesting isn't it?)
-![how to use it? image](./images/pic-selected-230713-1731-22.png)
+![how to use it? image](./images/pic-selected-230716-1031-27.png)
 
 
 ## Why there is no `help` command?
