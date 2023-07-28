@@ -27,7 +27,7 @@ If you are using `Windows`:
 ```git clone https://github.com/shareghzadeh/hasher.git
    cd hasher
    go build hasher.go
-   ./hasher
+   hasher.exe
    ```
 
 ![how to use it? image](./images/pic-selected-230716-1031-27.png)
