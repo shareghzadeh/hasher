@@ -27,8 +27,39 @@ If you are using `Windows`:
 ```git clone https://github.com/shareghzadeh/hasher.git
    cd hasher
    go build hasher.go
-   ./hasher
+   hasher.exe
    ```
+**NOTE:** if you are using `windows` open `hasher.go` and change this:
+```
+const (
+	Red    = "\033[31m"
+	Green  = "\033[32m"
+	Yellow = "\033[33m"
+	Blue   = "\033[34m"
+	Purple = "\033[35m"
+	Cyan   = "\033[36m"
+	White  = "\033[37m"
+	Reset  = "\033[0m"
+)
+```
+to this:
+```
+const (
+	Red    = ""
+	Green  = ""
+	Yellow = ""
+	Blue   = ""
+	Purple = ""
+	Cyan   = ""
+	White  = ""
+	Reset  = ""
+)
+```
+then run
+```
+go build hasher.go
+hasher.exe
+```
 
 ![how to use it? image](./images/pic-selected-230716-1031-27.png)
 
