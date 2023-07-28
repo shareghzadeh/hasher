@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
@@ -8,7 +9,11 @@ import (
 	"encoding/base32"
 	"encoding/base64"
 	"fmt"
+	"strings"
+
+	"log"
 	"net/url"
+	"regexp"
 
 	// HTML Encode(Escape/UnEscape)
 	"html"
@@ -58,6 +63,35 @@ func main() {
 		}
 
 	} else if arg1 == "md5" {
+		// check two files for md5 hashes
+		if strings.HasSuffix(arg2, ".txt") && strings.HasSuffix(arg3, ".txt") {
+
+			file1, err := os.Open(arg2)
+			file2, err := os.Open(arg3)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer file1.Close()
+			defer file2.Close()
+			scanner1 := bufio.NewScanner(file1)
+			scanner2 := bufio.NewScanner(file2)
+			for scanner1.Scan() && scanner2.Scan() {
+				if isMd5(scanner1.Text()) && !isMd5(scanner2.Text()) {
+					if scanner1.Text() == md5ToString(scanner2.Text()) {
+						fmt.Printf("%s -> %s\n", scanner2.Text(), scanner1.Text())
+					}
+				} else if !isMd5(scanner1.Text()) && isMd5(scanner2.Text()) {
+					if md5ToString(scanner1.Text()) == scanner2.Text() {
+						fmt.Printf("%s -> %s\n", scanner1.Text(), scanner2.Text())
+					}
+				} else {
+					fmt.Println("One file has to be MD5 and one raw text")
+					return
+				}
+			}
+			return
+		}
+		// END
 		switch arg2 {
 		case "e", "-e", "--encode", "encode", "h", "-h", "hash", "--hash":
 			hash := md5.Sum([]byte(arg3))
@@ -65,11 +99,44 @@ func main() {
 			fmt.Println(hashToString)
 		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
 			arg4 := os.Args[4]
-			// This if statement checks if passed tow md5 are the same or not(first turn the text to md5)
-			if md5ToString(arg3) == arg4 || arg3 == md5ToString(arg4) {
-				fmt.Printf("%s%s --> %s\n", Green, arg3, arg4)
+
+			file, err := os.Open(arg4)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer file.Close()
+			scanner := bufio.NewScanner(file)
+			var a string
+			if !isMd5(arg3) {
+				for scanner.Scan() {
+					if md5ToString(arg3) == scanner.Text() {
+						a = scanner.Text()
+					}
+				}
+				if err := scanner.Err(); err != nil {
+					log.Fatal(err)
+				}
+				if md5ToString(arg3) == a {
+					fmt.Printf("%s -> %s\n", arg3, a)
+				} else {
+					fmt.Printf("%sHash NOT FOUND\n", Red)
+				}
+			} else if isMd5(arg3) {
+				for scanner.Scan() {
+					if arg3 == md5ToString(scanner.Text()) {
+						a = scanner.Text()
+					}
+				}
+				if err := scanner.Err(); err != nil {
+					log.Fatal(err)
+				}
+				if arg3 == md5ToString(a) {
+					fmt.Printf("%s%s -> %s\n", Green, a, arg3)
+				} else {
+					fmt.Printf("%sHash NOT FOUND\n", Red)
+				}
 			} else {
-				fmt.Printf("%sHash Not Found!\n", Red)
+				fmt.Println("Your passed argument is hash and your file is hash too!!!")
 			}
 		default:
 			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher md5 -e <YOUR_TEXT>\n\t\tDehash--> ./hasher md5 -d <YOUR_TEXT> <YOUR_MD5>\n", Red)
@@ -211,4 +278,65 @@ func sha512ToString(a string) string {
 	hashBytes := hash.Sum(nil)
 	hashToString := fmt.Sprintf("%x", hashBytes)
 	return hashToString
+}
+
+func isMd5(s string) bool {
+	// Compile a regular expression to match a 32-character hexadecimal string
+	pattern := "^[a-f0-9]{32}$"
+	re := regexp.MustCompile(pattern)
+
+	// Check if the input matches the pattern
+	if !re.MatchString(s) {
+		return false
+	}
+	return true
+}
+
+func isHtmlEncode(s string) bool {
+	// Test HTML-encoded pattern
+	htmlPattern := "&[a-zA-Z]+;|&#\\d+;"
+	htmlRegex := regexp.MustCompile(htmlPattern)
+	// Check if the input matches the pattern
+	if !htmlRegex.MatchString(s) {
+		return false
+	}
+	return true
+
+}
+func isUrlEncode(s string) bool {
+	// Test URL-encoded pattern
+	urlPattern := "%[0-9a-fA-F]{2}"
+	urlRegex := regexp.MustCompile(urlPattern)
+	if !urlRegex.MatchString(s) {
+		return false
+	}
+	return true
+}
+func isSha1(s string) bool {
+	// Test URL-encoded pattern
+	sha1Pattern := "^[a-fA-F0-9]{40}$"
+	sha1Regex := regexp.MustCompile(sha1Pattern)
+	if !sha1Regex.MatchString(s) {
+		return false
+	}
+	return true
+}
+func isSha256(s string) bool {
+	// Test URL-encoded pattern
+	sha256Pattern := "^[a-fA-F0-9]{64}$"
+	sha256Regex := regexp.MustCompile(sha256Pattern)
+	if !sha256Regex.MatchString(s) {
+		return false
+	}
+	return true
+}
+func isSha512(s string) bool {
+	// Test URL-encoded pattern
+	sha512Pattern := "^[0-9a-fA-F]{128}$"
+	sha512Regex := regexp.MustCompile(sha512Pattern)
+	if !sha512Regex.MatchString(s) {
+		return false
+	}
+	return true
+
 }
