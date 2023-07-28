@@ -9,30 +9,60 @@ import (
 	"encoding/base32"
 	"encoding/base64"
 	"fmt"
+	"runtime"
 	"strings"
 
 	"log"
 	"net/url"
 	"regexp"
 
-	// HTML Encode(Escape/UnEscape)
 	"html"
 	"os"
 )
 
-const (
-	Red    = "\033[31m"
-	Green  = "\033[32m"
-	Yellow = "\033[33m"
-	Blue   = "\033[34m"
-	Purple = "\033[35m"
-	Cyan   = "\033[36m"
-	White  = "\033[37m"
-	Reset  = "\033[0m"
+// const(
+//
+//	Red    = "\033[31m"
+//	Green  = "\033[32m"
+//	Yellow = "\033[33m"
+//	Blue   = "\033[34m"
+//	Purple = "\033[35m"
+//	Cyan   = "\033[36m"
+//	White  = "\033[37m"
+//	Reset  = "\033[0m"
+//
+// )
+var (
+	Red    string
+	Green  string
+	Yellow string
+	Blue   string
+	Purple string
+	Cyan   string
+	White  string
+	Reset  string
 )
 
 func main() {
-
+	if runtime.GOOS == "windows" {
+		Red = ""
+		Green = ""
+		Yellow = ""
+		Blue = ""
+		Purple = ""
+		Cyan = ""
+		White = ""
+		Reset = ""
+	} else {
+		Red = "\033[31m"
+		Green = "\033[32m"
+		Yellow = "\033[33m"
+		Blue = "\033[34m"
+		Purple = "\033[35m"
+		Cyan = "\033[36m"
+		White = "\033[37m"
+		Reset = "\033[0m"
+	}
 	// this if/else if will check if the passed arguments are less than 2 argument
 	// and check if the passed arguments are more that 7 or equal to it
 	if len(os.Args) <= 1 {
