@@ -10,7 +10,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"runtime"
-	"strings"
 
 	"log"
 	"net/url"
@@ -94,34 +93,9 @@ func main() {
 
 	} else if arg1 == "md5" {
 		// check two files for md5 hashes
-		if strings.HasSuffix(arg2, ".txt") && strings.HasSuffix(arg3, ".txt") {
+		// if strings.HasSuffix(arg2, ".txt") && strings.HasSuffix(arg3, ".txt") {
+		// Open the first file
 
-			file1, err := os.Open(arg2)
-			file2, err := os.Open(arg3)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer file1.Close()
-			defer file2.Close()
-			scanner1 := bufio.NewScanner(file1)
-			scanner2 := bufio.NewScanner(file2)
-			for scanner1.Scan() && scanner2.Scan() {
-				if isMd5(scanner1.Text()) && !isMd5(scanner2.Text()) {
-					if scanner1.Text() == md5ToString(scanner2.Text()) {
-						fmt.Printf("%s -> %s\n", scanner2.Text(), scanner1.Text())
-					}
-				} else if !isMd5(scanner1.Text()) && isMd5(scanner2.Text()) {
-					if md5ToString(scanner1.Text()) == scanner2.Text() {
-						fmt.Printf("%s -> %s\n", scanner1.Text(), scanner2.Text())
-					}
-				} else {
-					fmt.Println("One file has to be MD5 and one raw text")
-					return
-				}
-			}
-			return
-		}
-		// END
 		switch arg2 {
 		case "e", "-e", "--encode", "encode", "h", "-h", "hash", "--hash":
 			hash := md5.Sum([]byte(arg3))
@@ -168,8 +142,48 @@ func main() {
 			} else {
 				fmt.Println("Your passed argument is hash and your file is hash too!!!")
 			}
+		case "-r", "r":
+			arg4 := os.Args[4]
+			if arg4 == "h" || arg4 == "-h" {
+				arg5 := os.Args[5]
+
+				fileA, err := os.Open(arg3)
+				if err != nil {
+					panic(err)
+				}
+				defer fileA.Close()
+
+				fileB, err := os.Open(arg5)
+				if err != nil {
+					panic(err)
+				}
+				defer fileB.Close()
+
+				// Create a scanner for each file
+				scannerA := bufio.NewScanner(fileA)
+				scannerB := bufio.NewScanner(fileB)
+
+				// Read each line of a.txt
+				for scannerA.Scan() {
+					lineA := scannerA.Text()
+
+					// Reset scannerB to the beginning of b.txt
+					fileB.Seek(0, 0)
+					scannerB = bufio.NewScanner(fileB)
+
+					// Read each line of b.txt and compare to lineA
+					for scannerB.Scan() {
+						lineB := scannerB.Text()
+
+						if md5ToString(lineA) == lineB {
+							fmt.Printf("%s --> %s\n", lineA, lineB)
+							break
+						}
+					}
+				}
+			}
 		default:
-			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher md5 -e <YOUR_TEXT>\n\t\tDehash--> ./hasher md5 -d <YOUR_TEXT> <YOUR_MD5>\n", Red)
+			fmt.Printf("%sUSAGE:\n\t\tHash --> ./hasher md5 -e <YOUR_TEXT>\n\t\tDehash--> ./hasher md5 -d <YOUR_TEXT> <YOUR_MD5>\n\n\t\tOR\n\t./hasher md5 -f a.txt b.txt", Red)
 		}
 
 	} else if arg1 == "base64" {
