@@ -10,6 +10,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"log"
 	"net/url"
@@ -95,9 +96,45 @@ func main() {
 		
 		switch arg2 {
 		case "e", "-e", "--encode", "encode", "h", "-h", "hash", "--hash":
-			hash := md5.Sum([]byte(arg3))
-			hashToString := fmt.Sprintf("%x\n", hash)
-			fmt.Println(hashToString)
+			
+			arg4 := os.Args[4]
+			arg5 := os.Args[5]
+			if strings.HasSuffix(arg5, ".txt") {
+				file, err := os.Open(arg3)
+				if err != nil {
+					log.Fatal(err)
+				}
+				defer file.Close()
+				scanner := bufio.NewScanner(file)
+				if err := scanner.Err(); err != nil {
+					log.Fatal(err)
+				}
+				if strings.HasSuffix(arg5, ".txt"){
+					if arg4 == "-o" || arg4 == "o" {
+						arg5 := arg5
+						file, err := os.Create(arg5)
+						if err != nil {
+							panic(err)
+						}
+						defer file.Close()
+						for scanner.Scan() {
+							a := md5ToString(scanner.Text())
+							_, err = file.WriteString(a+"\n")
+							if err != nil {
+								panic(err)
+							}
+						}
+					}
+					return
+				}
+			}else {
+				hash := md5.Sum([]byte(arg3))
+				hashToString := fmt.Sprintf("%x\n", hash)
+				fmt.Println(hashToString)
+				
+			}
+			
+			
 		case "d", "-d", "--decode", "decode", "dehash", "--dehash":
 			arg4 := os.Args[4]
 
