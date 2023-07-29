@@ -92,10 +92,7 @@ func main() {
 		}
 
 	} else if arg1 == "md5" {
-		// check two files for md5 hashes
-		// if strings.HasSuffix(arg2, ".txt") && strings.HasSuffix(arg3, ".txt") {
-		// Open the first file
-
+		
 		switch arg2 {
 		case "e", "-e", "--encode", "encode", "h", "-h", "hash", "--hash":
 			hash := md5.Sum([]byte(arg3))
